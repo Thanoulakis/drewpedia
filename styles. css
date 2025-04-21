@@ -1,0 +1,153 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #121212 0%, #2d2d2d 100%);
+    color: #ffffff;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    width: 100%;
+    max-width: 800px;
+    padding: 20px;
+}
+
+.quote-container {
+    background-color: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    font-weight: 700;
+    font-size: 32px;
+    letter-spacing: 1px;
+    color: #ffffff;
+    position: relative;
+}
+
+h1::after {
+    content: '';
+    position: absolute;
+    width: 60px;
+    height: 4px;
+    background: linear-gradient(90deg, #ff6b6b, #ffb347);
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 2px;
+}
+
+.quote-box {
+    margin-top: 30px;
+    padding: 20px;
+    border-radius: 15px;
+    background-color: rgba(255, 255, 255, 0.05);
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.quote-box::before {
+    content: '"';
+    font-size: 80px;
+    position: absolute;
+    top: -20px;
+    left: 10px;
+    color: rgba(255, 255, 255, 0.1);
+    font-family: 'Georgia', serif;
+}
+
+.quote-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.quote-content p {
+    font-size: 22px;
+    line-height: 1.5;
+    margin-bottom: 20px;
+    font-weight: 300;
+    text-align: center;
+    padding: 0 20px;
+}
+
+.author {
+    text-align: right;
+    margin-top: 20px;
+    padding-right: 20px;
+}
+
+.author p {
+    font-size: 18px;
+    font-style: italic;
+    color: #ffb347;
+    font-weight: 600;
+}
+
+button {
+    display: block;
+    margin: 40px auto 0;
+    padding: 15px 30px;
+    background: linear-gradient(90deg, #ff6b6b, #ffb347);
+    border: none;
+    border-radius: 50px;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+}
+
+button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(255, 107, 107, 0.4);
+}
+
+button:active {
+    transform: translateY(0);
+    box-shadow: 0 5px 10px rgba(255, 107, 107, 0.4);
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+    
+    .quote-container {
+        padding: 30px 20px;
+    }
+    
+    h1 {
+        font-size: 24px;
+    }
+    
+    .quote-content p {
+        font-size: 18px;
+    }
+    
+    .author p {
+        font-size: 16px;
+    }
+    
+    button {
+        padding: 12px 25px;
+        font-size: 14px;
+    }
+}

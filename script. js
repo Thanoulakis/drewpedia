@@ -1,0 +1,304 @@
+/**
+ * Modern Quote Display System
+ * A sleek, interactive quote generator featuring dynamic content loading,
+ * smooth animations, and mobile-friendly design.
+ */
+
+// Wait for DOM to fully load
+document.addEventListener('DOMContentLoaded', () => {
+    // Configuration
+    const CONFIG = {
+        fadeTime: 300,        // Transition time in ms
+        autoChangeTime: 15000, // Auto-change quotes every 15 seconds (set to 0 to disable)
+        typingEffect: true,   // Enable typewriter effect
+        typingSpeed: 30       // Typing speed in ms per character
+    };
+
+    // DOM Elements
+    const elements = {
+        quoteText: document.getElementById('quote-text'),
+        authorName: document.getElementById('author-name'),
+        newQuoteBtn: document.getElementById('new-quote-btn'),
+        quoteBox: document.querySelector('.quote-box')
+    };
+
+    // Quote Collection
+    const quoteCollection = [
+        {
+            text: "You have one life and it's your duty to live it as fully as possible.",
+            author: "Andrew Tate",
+            category: "motivation"
+        },
+        {
+            text: "If you're not willing to work hard, don't expect anything in return.",
+            author: "Andrew Tate",
+            category: "success"
+        },
+        {
+            text: "Depression isn't real. You feel sad, you move on. You will always be depressed if your life is depressing. Change it.",
+            author: "Andrew Tate",
+            category: "mindset"
+        },
+        {
+            text: "The person who goes to the gym every day regardless of how they feel will always beat the person who goes to the gym when they feel like going to the gym.",
+            author: "Andrew Tate",
+            category: "discipline"
+        },
+        {
+            text: "The temporary satisfaction of quitting is outweighed by the eternal suffering of being a nobody.",
+            author: "Andrew Tate",
+            category: "motivation"
+        },
+        {
+            text: "Your mind must be stronger than your feelings.",
+            author: "Andrew Tate",
+            category: "mindset"
+        },
+        {
+            text: "Aspire to be a superhero. Not a normal person with a little bit of money.",
+            author: "Andrew Tate",
+            category: "ambition"
+        },
+        {
+            text: "Life is meant to be lived. Get off the internet and live it.",
+            author: "Andrew Tate",
+            category: "lifestyle"
+        },
+        {
+            text: "If you want to be successful, you need to start thinking differently than everyone else.",
+            author: "Andrew Tate",
+            category: "success"
+        },
+        {
+            text: "Success is always found outside your comfort zone.",
+            author: "Andrew Tate",
+            category: "success"
+        },
+        {
+            text: "Failure is the best teacher. If you never fail, you'll never learn.",
+            author: "Andrew Tate",
+            category: "mindset"
+        },
+        {
+            text: "I don't count money, I weigh it.",
+            author: "Andrew Tate",
+            category: "wealth"
+        },
+        {
+            text: "The harder you work, the luckier you get.",
+            author: "Andrew Tate",
+            category: "success"
+        },
+        {
+            text: "The only person you should try to be better than is the person you were yesterday.",
+            author: "Andrew Tate",
+            category: "self-improvement"
+        },
+        {
+            text: "The matrix attacks those it fears the most.",
+            author: "Andrew Tate",
+            category: "mindset"
+        }
+    ];
+    
+    // Track currently displayed quote
+    let currentQuoteIndex = -1;
+    let autoChangeInterval = null;
+    
+    // Initialize animations
+    const setupAnimations = () => {
+        elements.quoteText.style.transition = 'opacity 0.3s ease';
+        elements.authorName.style.transition = 'opacity 0.3s ease';
+        elements.quoteBox.style.transition = 'transform 0.5s ease, box-shadow 0.5s ease';
+    };
+    
+    // Typewriter effect function
+    const typewriterEffect = (element, text, speed, callback) => {
+        let i = 0;
+        element.textContent = '';
+        
+        const typeChar = () => {
+            if (i < text.length) {
+                element.textContent += text.charAt(i);
+                i++;
+                setTimeout(typeChar, speed);
+            } else if (callback) {
+                callback();
+            }
+        };
+        
+        typeChar();
+    };
+    
+    // Display a quote with animation
+    const displayQuote = (quote) => {
+        // Fade out current quote
+        elements.quoteText.style.opacity = '0';
+        elements.authorName.style.opacity = '0';
+        elements.quoteBox.style.transform = 'translateY(10px)';
+        
+        // Wait for fade out to complete
+        setTimeout(() => {
+            if (CONFIG.typingEffect) {
+                // Start typewriter effect
+                elements.quoteText.textContent = '';
+                typewriterEffect(elements.quoteText, quote.text, CONFIG.typingSpeed, () => {
+                    // Show author after quote is typed
+                    elements.authorName.textContent = `— ${quote.author}`;
+                    elements.authorName.style.opacity = '1';
+                });
+                // Show quote box immediately
+                elements.quoteBox.style.transform = 'translateY(0)';
+                elements.quoteText.style.opacity = '1';
+            } else {
+                // Update the DOM without typewriter effect
+                elements.quoteText.textContent = quote.text;
+                elements.authorName.textContent = `— ${quote.author}`;
+                
+                // Fade in new quote
+                elements.quoteText.style.opacity = '1';
+                elements.authorName.style.opacity = '1';
+                elements.quoteBox.style.transform = 'translateY(0)';
+            }
+            
+            // Add subtle background color based on category if available
+            if (quote.category) {
+                const categoryColors = {
+                    'motivation': 'rgba(255, 107, 107, 0.05)',
+                    'success': 'rgba(107, 255, 107, 0.05)',
+                    'mindset': 'rgba(107, 107, 255, 0.05)',
+                    'discipline': 'rgba(255, 255, 107, 0.05)',
+                    'ambition': 'rgba(255, 107, 255, 0.05)',
+                    'lifestyle': 'rgba(107, 255, 255, 0.05)',
+                    'wealth': 'rgba(255, 215, 0, 0.05)',
+                    'self-improvement': 'rgba(0, 191, 255, 0.05)'
+                };
+                
+                elements.quoteBox.style.backgroundColor = categoryColors[quote.category] || 'rgba(255, 255, 255, 0.05)';
+            }
+        }, CONFIG.fadeTime);
+    };
+    
+    // Get a random quote different from the current one
+    const getRandomQuote = () => {
+        if (quoteCollection.length <= 1) return quoteCollection[0];
+        
+        let newIndex;
+        do {
+            newIndex = Math.floor(Math.random() * quoteCollection.length);
+        } while (newIndex === currentQuoteIndex);
+        
+        currentQuoteIndex = newIndex;
+        return quoteCollection[currentQuoteIndex];
+    };
+    
+    // Display a random quote
+    const displayRandomQuote = () => {
+        const randomQuote = getRandomQuote();
+        displayQuote(randomQuote);
+    };
+    
+    // Setup auto-change interval if enabled
+    const setupAutoChange = () => {
+        if (CONFIG.autoChangeTime > 0) {
+            if (autoChangeInterval) clearInterval(autoChangeInterval);
+            autoChangeInterval = setInterval(displayRandomQuote, CONFIG.autoChangeTime);
+        }
+    };
+    
+    // Initialize the quote display
+    const initQuoteDisplay = () => {
+        setupAnimations();
+        displayRandomQuote();
+        setupAutoChange();
+        
+        // Event listener for the button
+        elements.newQuoteBtn.addEventListener('click', () => {
+            displayRandomQuote();
+            
+            // Reset auto-change timer when manually changing quote
+            if (autoChangeInterval) {
+                clearInterval(autoChangeInterval);
+                setupAutoChange();
+            }
+            
+            // Add button press animation
+            elements.newQuoteBtn.classList.add('pressed');
+            setTimeout(() => {
+                elements.newQuoteBtn.classList.remove('pressed');
+            }, 200);
+        });
+        
+        // Add subtle hover effect to quote box
+        elements.quoteBox.addEventListener('mouseenter', () => {
+            elements.quoteBox.style.transform = 'translateY(-5px)';
+            elements.quoteBox.style.boxShadow = '0 15px 30px rgba(0, 0, 0, 0.3)';
+        });
+        
+        elements.quoteBox.addEventListener('mouseleave', () => {
+            elements.quoteBox.style.transform = 'translateY(0)';
+            elements.quoteBox.style.boxShadow = '0 10px 20px rgba(0, 0, 0, 0.2)';
+        });
+        
+        // Additional functionality - sharing quotes
+        if (navigator.share) {
+            // Create share button if Web Share API is supported
+            const shareButton = document.createElement('button');
+            shareButton.innerHTML = 'Share Quote';
+            shareButton.className = 'share-btn';
+            shareButton.style.marginLeft = '10px';
+            elements.newQuoteBtn.parentNode.appendChild(shareButton);
+            
+            shareButton.addEventListener('click', () => {
+                const currentQuote = quoteCollection[currentQuoteIndex];
+                navigator.share({
+                    title: 'Inspirational Quote',
+                    text: `"${currentQuote.text}" - ${currentQuote.author}`,
+                    url: window.location.href
+                }).catch(console.error);
+            });
+        }
+    };
+    
+    // Initialize when DOM is ready
+    initQuoteDisplay();
+    
+    // Add keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+        if (e.code === 'Space' || e.code === 'ArrowRight') {
+            displayRandomQuote();
+            
+            // Reset auto-change timer when manually changing quote
+            if (autoChangeInterval) {
+                clearInterval(autoChangeInterval);
+                setupAutoChange();
+            }
+        }
+    });
+    
+    // Mobile swipe support for changing quotes
+    let touchStartX = 0;
+    let touchEndX = 0;
+    
+    document.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+    }, false);
+    
+    document.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+    }, false);
+    
+    const handleSwipe = () => {
+        // Detect left swipe
+        if (touchEndX < touchStartX - 50) {
+            displayRandomQuote();
+            
+            // Reset auto-change timer when manually changing quote
+            if (autoChangeInterval) {
+                clearInterval(autoChangeInterval);
+                setupAutoChange();
+            }
+        }
+    };
+});
